@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 import json
 import pathlib
-from typing import Callable
+from typing import Callable, Optional, Sequence
 # todo: Check platform.
 try:
     import winreg
@@ -14,7 +14,7 @@ else:
 
 
 class ThemeMode(Enum):
-    """Represents the two modes of a theme."""
+    """Represents the two modes of a theme, dark and light."""
     dark: int = 0
     light: int = 1
 
@@ -43,6 +43,10 @@ class AppTheme:
         return self.dark_name, self.light_name
 
 
+# Type alias to simplify themes typing.
+AppThemes = Sequence[AppTheme]
+
+
 def main(themes):
     """Toggle themes between dark and light mode based on systems mode.
 
@@ -50,7 +54,7 @@ def main(themes):
         themes: List with "registered" themes
     """
     # Get toggled mode based on current system mode.
-    toggled_mode = get_toggled_mode(get_current_mode())
+    toggled_mode = get_toggled_mode(get_current_mode(themes))
     print('\nSetting themes...')
 
     for theme in themes:
@@ -98,7 +102,7 @@ def set_vscode_theme(theme: AppTheme):
         print(repr(e))
 
 
-def set_terminal_theme(theme: ApplicationTheme):
+def set_terminal_theme(theme: AppTheme):
     """Set theme by replacing theme name in string.
 
     Unable to load settings as JSON since it contains comments.
@@ -144,7 +148,7 @@ def set_terminal_theme(theme: ApplicationTheme):
         print(repr(e))
 
 
-def get_current_mode() -> ThemeMode:
+def get_current_mode(themes: AppThemes) -> ThemeMode:
     """Get current mode based on reference key."""
     try:
         # todo: Check platform and add more platforms.
@@ -157,10 +161,10 @@ def get_current_mode() -> ThemeMode:
                     if winreg.QueryValueEx(hkey, 'AppsUseLightTheme')[0]
                     else ThemeMode.dark)
     except Exception:
-        return get_current_app_mode()
+        return get_current_app_mode(themes)
 
 
-def get_current_app_mode() -> ThemeMode:
+def get_current_app_mode(themes: AppThemes, theme_id: int = 0) -> ThemeMode:
     """Return current app mode.
 
     Use first theme in themes sequence as reference by default.
@@ -212,8 +216,8 @@ if IS_WINDOWS:
 
 
 if __name__ == "__main__":
-    themes = [
-        ApplicationTheme(
+    themes: AppThemes = [
+        AppTheme(
             option='vscode',
             keys='workbench.colorTheme',
             light_name='Default Light+',
