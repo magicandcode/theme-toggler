@@ -147,8 +147,6 @@ def set_terminal_theme(theme: ApplicationTheme):
 def get_current_mode() -> ThemeMode:
     """Get current mode based on reference key."""
     try:
-        # test:
-        assert False
         # todo: Check platform and add more platforms.
         with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
