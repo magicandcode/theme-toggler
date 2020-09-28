@@ -20,7 +20,7 @@ class ThemeMode(Enum):
 
 
 @dataclass
-class ApplicationTheme:
+class AppTheme:
     """Represents the theme of an application.
 
     Set separate path for each supported platform to enable
@@ -63,7 +63,7 @@ def main(themes):
     print()
 
 
-def set_vscode_theme(theme: ApplicationTheme):
+def set_vscode_theme(theme: AppTheme):
     # Change current mode.
     path = theme.path
     try:
@@ -163,9 +163,15 @@ def get_current_mode() -> ThemeMode:
 def get_current_app_mode() -> ThemeMode:
     """Return current app mode.
 
+    Use first theme in themes sequence as reference by default.
+
     Return light theme by default to toggle to dark theme.
     """
-    theme: ApplicationTheme = themes[0]
+    theme: AppTheme
+    try:
+        theme = themes[theme_id]
+    except (IndexError, TypeError):
+        theme = themes[0]
 
     # Change current mode.
     path = theme.path
@@ -220,7 +226,7 @@ if __name__ == "__main__":
                 r'\settings.json'),
             toggle_callback=set_vscode_theme,
         ),
-        ApplicationTheme(
+        AppTheme(
             option='terminal',
             keys='profiles:defaults:colorScheme',
             light_name='OneLight',
