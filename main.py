@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-from dataclasses import dataclass
-from enum import Enum
 import json
 import pathlib
-from typing import Callable, Optional, Sequence
+from dataclasses import dataclass
+from enum import Enum
+from typing import Callable, Sequence
+
 # todo: Check platform.
 try:
     import winreg
