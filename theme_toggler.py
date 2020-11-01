@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import json
-import pathlib
 
-from callback import set_terminal_theme, set_vscode_theme
+from settings import THEMES
 from theme import AppTheme, AppThemes, ThemeMode
 
 
@@ -19,17 +18,17 @@ CURRENT_USER_PERSONALIZE_KEY: str = (r'SOFTWARE\Microsoft\Windows'
                                      r'\CurrentVersion\Themes\Personalize')
 
 
-def main(themes):
+def main():
     """Toggle themes between dark and light mode based on systems mode.
 
     Args:
         themes: List with "registered" themes
     """
     # Get toggled mode based on current system mode.
-    toggled_mode = get_toggled_mode(get_current_mode(themes))
+    toggled_mode = get_toggled_mode(get_current_mode(THEMES))
     print('\nSetting themes...')
 
-    for theme in themes:
+    for theme in THEMES:
         # Set toggled mode.
         theme.mode = toggled_mode
         theme.toggle_callback(theme)
@@ -110,34 +109,4 @@ if IS_WINDOWS:
 
 
 if __name__ == "__main__":
-    themes: AppThemes = [
-        AppTheme(
-            option='vscode',
-            keys='workbench.colorTheme',
-            light_name='Default Light+',
-            dark_name='Default Dark+',
-            path=pathlib.Path(
-                '/mnt/c/Users/magicandcode/AppData/Roaming/Code/User/'
-                'settings.json'),
-            windows_path=pathlib.Path(
-                r'C:\Users\magicandcode\AppData\Roaming\Code\User'
-                r'\settings.json'),
-            toggle_callback=set_vscode_theme,
-        ),
-        AppTheme(
-            option='terminal',
-            keys='profiles:defaults:colorScheme',
-            light_name='OneLight',
-            dark_name='Dracula',
-            path=pathlib.Path(
-                '/mnt/c/Users/magicandcode/AppData/Local/Packages/'
-                'Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/'
-                'settings.json'),
-            windows_path=pathlib.Path(
-                r'C:\Users\magicandcode\AppData\Local\Packages'
-                r'\Microsoft.WindowsTerminal_8wekyb3d8bbwe'
-                r'\LocalState\settings.json'),
-            toggle_callback=set_terminal_theme,
-        ),
-    ]
-    main(themes)
+    main()
