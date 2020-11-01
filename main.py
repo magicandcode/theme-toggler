@@ -14,6 +14,10 @@ except ModuleNotFoundError:
 else:
     IS_WINDOWS = True
 
+# Windows Registry key for personalisation settings of current user.
+CURRENT_USER_PERSONALIZE_KEY: str = (r'SOFTWARE\Microsoft\Windows'
+                                     r'\CurrentVersion\Themes\Personalize')
+
 
 def main(themes):
     """Toggle themes between dark and light mode based on systems mode.
@@ -41,8 +45,7 @@ def get_current_mode(themes: AppThemes) -> ThemeMode:
         # todo: Check platform and add more platforms.
         with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
-                (r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes'
-                 r'\Personalize'),
+                CURRENT_USER_PERSONALIZE_KEY,
                 access=winreg.KEY_READ) as hkey:
             return (ThemeMode.light
                     if winreg.QueryValueEx(hkey, 'AppsUseLightTheme')[0]
@@ -91,8 +94,7 @@ if IS_WINDOWS:
         """Toggle apps and system mode."""
         with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
-                (r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes'
-                 r'\Personalize'),
+                CURRENT_USER_PERSONALIZE_KEY,
                 access=winreg.KEY_ALL_ACCESS) as hkey:
             # Change mode for both apps and system theme to sync mode.
             winreg.SetValueEx(
