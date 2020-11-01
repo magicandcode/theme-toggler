@@ -51,6 +51,7 @@ def get_current_mode(themes: AppThemes) -> ThemeMode:
                     if winreg.QueryValueEx(hkey, 'AppsUseLightTheme')[0]
                     else ThemeMode.dark)
     except Exception:
+        # Get current theme based on app mode as fallback.
         return get_current_app_mode(themes)
 
 
@@ -59,15 +60,19 @@ def get_current_app_mode(themes: AppThemes, theme_id: int = 0) -> ThemeMode:
 
     Use first theme in themes sequence as reference by default.
 
-    Return light theme by default to toggle to dark theme.
+    Return light theme by default to toggle to dark theme; the theme
+      will be changed to the opposite theme of what this returns.
     """
-    theme: AppTheme
+    # Get first theme, if this fails there's no use to continue the
+    #   program so it's ok to have an exception.
+    # todo: Catch exception to display a more clear error message?
+    theme: AppTheme = themes[0]
     try:
         theme = themes[theme_id]
     except (IndexError, TypeError):
-        theme = themes[0]
+        pass
 
-    # Change current mode.
+    # Get current mode.
     path = theme.path
     try:
         with open(path, 'r', encoding='utf-8') as f:
@@ -79,6 +84,7 @@ def get_current_app_mode(themes: AppThemes, theme_id: int = 0) -> ThemeMode:
             settings = json.load(f)
             return theme.modes(settings[theme.keys] == theme.light_name)
     except Exception:
+        # Fallback to light theme mode.
         return ThemeMode.light
 
 
