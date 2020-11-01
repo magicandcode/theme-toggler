@@ -35,7 +35,7 @@ def main(themes):
         theme.toggle_callback(theme)
     if IS_WINDOWS:
         print(f'Setting system theme to: {toggled_mode.name}')
-        toggle_mode(toggled_mode)
+        toggle_system_mode(toggled_mode)
     print()
 
 
@@ -96,7 +96,7 @@ def get_toggled_mode(current_mode: ThemeMode) -> ThemeMode:
 # todo: Implement better solution for toggling system mode and for more
 #   platforms.
 if IS_WINDOWS:
-    def toggle_mode(mode: ThemeMode):
+    def toggle_system_mode(mode: ThemeMode):
         """Toggle apps and system mode."""
         with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
