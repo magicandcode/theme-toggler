@@ -34,9 +34,9 @@ class AppTheme:
     path: pathlib.Path
     windows_path: pathlib.Path
     toggle_callback: Callable
-    mode: ThemeMode = ThemeMode.dark
+    mode: ThemeMode = ThemeMode.light  # Set default mode
     settings_delimiter: str = ':'
-    modes = ThemeMode.dark, ThemeMode.light
+    modes: Enum = ThemeMode
 
     @property
     def names(self):
@@ -188,15 +188,14 @@ def get_current_app_mode(themes: AppThemes, theme_id: int = 0) -> ThemeMode:
     try:
         with open(path, 'r', encoding='utf-8') as f:
             settings = json.load(f)
-            return theme.modes[settings[theme.keys] == theme.light_name]
+            return theme.modes(settings[theme.keys] == theme.light_name)
     except Exception:
         return ThemeMode.light
 
 
 def get_toggled_mode(current_mode: ThemeMode) -> ThemeMode:
     """Get toggled mode based on current mode."""
-    return (ThemeMode.light
-            if current_mode == ThemeMode.dark else ThemeMode.dark)
+    return ThemeMode(current_mode == ThemeMode.dark)
 
 
 # todo: Implement better solution for toggling system mode and for more
