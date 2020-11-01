@@ -6,6 +6,7 @@ APP_NAME, APP_SLUG = 'ThemeToggler', 'theme_toggler'
 setup(
     name=APP_NAME,
     py_modules=[APP_SLUG],
+    version='1.1.0',
     install_requires=[],
     entry_points=f'''
         [console_scripts]
