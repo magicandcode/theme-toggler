@@ -6,7 +6,7 @@ from theme import AppTheme, AppThemes
 
 THEMES: AppThemes = [
         AppTheme(
-            option='vscode',
+            app_name='vscode',
             keys='workbench.colorTheme',
             light_name='Default Light+',
             dark_name='Default Dark+',
@@ -19,7 +19,7 @@ THEMES: AppThemes = [
             toggle_callback=set_vscode_theme,
         ),
         AppTheme(
-            option='terminal',
+            app_name='terminal',
             keys='profiles:defaults:colorScheme',
             light_name='OneLight',
             dark_name='Dracula',

@@ -17,7 +17,7 @@ class AppTheme:
     Set separate path for each supported platform to enable
     cross-platform and cross-device compatability.
     """
-    option: str
+    app_name: str
     keys: str
     light_name: str
     dark_name: str
