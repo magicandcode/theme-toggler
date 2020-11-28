@@ -39,13 +39,13 @@ Navigate into the project directory and run the `theme_toggler.py` file as a mod
 ### Windows
 ```
 cd theme-toggler
-python -m main
+python -m theme_toggler
 ```
 > Python installed via *Microsoft Store* doesn't have access to edit the Windows Registry. You need to download Python from [python.org](https://python.org) (and add it to `PATH`) if you want to also toggle system mode.
 ### Linux/MacOS
 ```
 cd theme-toggler
-python3 -m main
+python3 -m theme_toggler
 ```
 > Currently you cannot toggle system mode for other platforms than Windows.
 
