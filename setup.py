@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-APP_NAME, APP_SLUG = 'ThemeToggler', 'theme_toggler'
+APP_NAME, APP_SLUG = 'ThemeToggler', 'themetoggler'
 
 setup(
     name=APP_NAME,
