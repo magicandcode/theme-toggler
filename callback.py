@@ -1,6 +1,18 @@
 import json
+# todo: Check platform.
+try:
+    import winreg
+except ModuleNotFoundError:
+    IS_WINDOWS = False
+else:
+    IS_WINDOWS = True
 
-from theme import AppTheme
+from theme import AppTheme, AppThemes, ThemeMode
+
+
+# Windows Registry key for personalisation settings of current user.
+CURRENT_USER_PERSONALIZE_KEY: str = (
+    r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize')
 
 
 def set_vscode_theme(theme: AppTheme):
@@ -92,3 +104,69 @@ def set_terminal_theme(theme: AppTheme):
         #   set theme mode for other apps even if this app fails.
         print('Failed to set Terminal theme.')
         print(repr(e))
+
+
+def toggle_system_mode(mode: ThemeMode) -> bool:
+    """Toggle apps and system mode."""
+    try:
+        with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                CURRENT_USER_PERSONALIZE_KEY,
+                access=winreg.KEY_ALL_ACCESS) as hkey:
+            # Change mode for both apps and system theme to sync mode.
+            winreg.SetValueEx(
+                hkey, 'AppsUseLightTheme', 0, winreg.REG_DWORD, mode.value)
+            winreg.SetValueEx(
+                hkey, 'SystemUsesLightTheme', 0, winreg.REG_DWORD, mode.value)
+            return True
+    except Exception:
+        return False
+
+
+def get_current_mode(themes: AppThemes) -> ThemeMode:
+    """Get current mode based on reference key."""
+    try:
+        # todo: Check platform and add more platforms.
+        with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                CURRENT_USER_PERSONALIZE_KEY,
+                access=winreg.KEY_READ) as hkey:
+            return (ThemeMode.light
+                    if winreg.QueryValueEx(hkey, 'AppsUseLightTheme')[0]
+                    else ThemeMode.dark)
+    except Exception:
+        # Get current theme based on app mode as fallback.
+        return get_current_app_mode(themes)
+
+
+def get_current_app_mode(themes: AppThemes, theme_id: int = 0) -> ThemeMode:
+    """Return current app mode.
+
+    Use first theme in themes sequence as reference by default.
+
+    Return light theme by default to toggle to dark theme; the theme
+      will be changed to the opposite theme of what this returns.
+    """
+    # Get first theme, if this fails there's no use to continue the
+    #   program so it's ok to have an exception.
+    # todo: Catch exception to display a more clear error message?
+    theme: AppTheme = themes[0]
+    try:
+        theme = themes[theme_id]
+    except (IndexError, TypeError):
+        pass
+
+    # Get current mode.
+    path = theme.path
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            pass
+    except FileNotFoundError:
+        path = theme.windows_path
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            settings = json.load(f)
+            return theme.modes(settings[theme.keys] == theme.light_name)
+    except Exception:
+        # Fallback to light theme mode.
+        return ThemeMode.light
